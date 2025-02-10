@@ -8,8 +8,8 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/lblSensorLuz"
-        android:text="Sensor de Luz"
+        android:id="@+id/lblSensorProximidad"
+        android:text="Sensor de Proximidad"
         android:layout_marginTop="40dp"
         android:layout_marginLeft="20dp"
         android:layout_width="wrap_content"

@@ -50,25 +50,25 @@ public class MainActivity extends AppCompatActivity {
         sensorManager.unregisterListener(sensorEventListener);
     }
     private void sensorLuz(){
-        tempVal = findViewById(R.id.lblSensorLuz);
+        tempVal = findViewById(R.id.lblSensorProximidad);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         if( sensor==null ){
-            tempVal.setText("Tu dispositivo, NO tiene el senor de LUZ");
+            tempVal.setText("Tu dispositivo, NO tiene el senor de PROXIMIDAD");
             finish();
         }
         sensorEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 double valor = event.values[0];
-                tempVal.setText("Cantidad de Luz: "+ valor);
+                tempVal.setText("Proximidad: "+ valor);
 
-                if(valor<=20){
+                if(valor<=4){
+                    getWindow().getDecorView().setBackgroundColor(Color.BLACK);
+                }else if(valor<=8){
                     getWindow().getDecorView().setBackgroundColor(Color.GRAY);
-                }else if(valor<=50){
-                    getWindow().getDecorView().setBackgroundColor(Color.BLUE);
                 }else{
-                    getWindow().getDecorView().setBackgroundColor(Color.YELLOW);
+                    getWindow().getDecorView().setBackgroundColor(Color.WHITE);
                 }
             }
             @Override
