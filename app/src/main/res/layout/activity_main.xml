@@ -15,4 +15,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <Button
+        android:id="@+id/btnIniciar"
+        android:text="Iniciar"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btnPausar"
+        android:text="Pausar"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="120dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/btnParar"
+        android:text="Parar"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="230dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>
