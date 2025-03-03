@@ -1,12 +1,3 @@
 <resources>
-    <string name="app_name">miPrimeraAplicacion</string>
-    <string-array name="monedas">
-        <item>Dolar</item>
-        <item>Euro</item>
-        <item>Quetzalez</item>
-        <item>Lempiras</item>
-        <item>Cordobas</item>
-        <item>Colon CR</item>
-        <item>Colon SV</item>
-    </string-array>
+    <string name="app_name">Agenda</string>
 </resources>
