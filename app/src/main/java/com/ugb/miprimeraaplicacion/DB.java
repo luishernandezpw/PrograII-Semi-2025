@@ -1,6 +1,7 @@
 package com.ugb.miprimeraaplicacion;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -41,5 +42,9 @@ public class DB extends SQLiteOpenHelper {
         } catch (Exception e) {
             return e.getMessage();
         }
+    }
+    public Cursor lista_amigos() {
+        SQLiteDatabase db = getReadableDatabase();
+        return db.rawQuery("SELECT * FROM amigos", null);
     }
 }
