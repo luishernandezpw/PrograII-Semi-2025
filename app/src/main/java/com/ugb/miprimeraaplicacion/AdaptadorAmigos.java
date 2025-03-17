@@ -1,10 +1,13 @@
 package com.ugb.miprimeraaplicacion;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +54,10 @@ public class AdaptadorAmigos extends BaseAdapter {
 
             tempVal = itemView.findViewById(R.id.lblEmailAdaptador);
             tempVal.setText(misAmigos.getEmail());
+
+            ImageView img = itemView.findViewById(R.id.imgFotoAdaptador);
+            Bitmap bitmap = BitmapFactory.decodeFile(misAmigos.getFoto());
+            img.setImageBitmap(bitmap);
         } catch (Exception e) {
             Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }

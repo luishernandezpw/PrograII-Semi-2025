@@ -57,8 +57,8 @@
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:src="@mipmap/ic_launcher_round"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
     <Button
         android:id="@+id/btnGuardarAmigo"
         android:text="Guardar Amigo"
