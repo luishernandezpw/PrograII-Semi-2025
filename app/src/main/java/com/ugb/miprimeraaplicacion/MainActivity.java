@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
         tempVal = findViewById(R.id.txtDui);
         String dui = tempVal.getText().toString();
 
-        String[] datos = {"", nombre, direccion, telefono, email, dui, ""};
-        db.administrar_amigos("agregar", datos);
+        String[] datos = {idAmigo, nombre, direccion, telefono, email, dui, ""};
+        db.administrar_amigos(accion, datos);
         Toast.makeText(getApplicationContext(), "Registro guardado con exito.", Toast.LENGTH_LONG).show();
         abrirVentana();
     }
