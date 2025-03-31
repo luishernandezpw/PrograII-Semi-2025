@@ -32,15 +32,18 @@ public class MainActivity extends AppCompatActivity {
     Button btn;
     TextView tempVal;
     DB db;
-    String accion = "nuevo", idAmigo = "";
+    String accion = "nuevo", idAmigo = "", id="", rev="";
     ImageView img;
     String urlCompletaFoto = "";
     Intent tomarFotoIntent;
+    utilidades utls;
+    detectarInternet di;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        utls = new utilidades();
         img = findViewById(R.id.imgFotoAmigo);
         db = new DB(this);
         btn = findViewById(R.id.btnGuardarAmigo);
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
             accion = parametros.getString("accion");
             if (accion.equals("modificar")) {
                 JSONObject datos = new JSONObject(parametros.getString("amigos"));
+                id = datos.getString("_id");
+                rev = datos.getString("_rev");
                 idAmigo = datos.getString("idAmigo");
 
                 tempVal = findViewById(R.id.txtNombre);
@@ -77,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
                 urlCompletaFoto = datos.getString("urlFoto");
                 img.setImageURI(Uri.parse(urlCompletaFoto));
+            }else {
+                idAmigo = utls.generarUnicoId();
             }
         }catch (Exception e){
             mostrarMsg("Error: "+e.getMessage());
@@ -136,23 +143,54 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void guardarAmigo() {
-        tempVal = findViewById(R.id.txtNombre);
-        String nombre = tempVal.getText().toString();
+        try {
+            tempVal = findViewById(R.id.txtNombre);
+            String nombre = tempVal.getText().toString();
 
-        tempVal = findViewById(R.id.txtDireccion);
-        String direccion = tempVal.getText().toString();
+            tempVal = findViewById(R.id.txtDireccion);
+            String direccion = tempVal.getText().toString();
 
-        tempVal = findViewById(R.id.txtTelefono);
-        String telefono = tempVal.getText().toString();
-        tempVal = findViewById(R.id.txtEmail);
-        String email = tempVal.getText().toString();
+            tempVal = findViewById(R.id.txtTelefono);
+            String telefono = tempVal.getText().toString();
+            tempVal = findViewById(R.id.txtEmail);
+            String email = tempVal.getText().toString();
 
-        tempVal = findViewById(R.id.txtDui);
-        String dui = tempVal.getText().toString();
+            tempVal = findViewById(R.id.txtDui);
+            String dui = tempVal.getText().toString();
 
-        String[] datos = {idAmigo, nombre, direccion, telefono, email, dui, urlCompletaFoto};
-        db.administrar_amigos(accion, datos);
-        Toast.makeText(getApplicationContext(), "Registro guardado con exito.", Toast.LENGTH_LONG).show();
-        abrirVentana();
+            JSONObject datosAmigos = new JSONObject();
+            if (accion.equals("modificar")) {
+                datosAmigos.put("_id", id);
+                datosAmigos.put("_rev", rev);
+            }
+            datosAmigos.put("idAmigo", idAmigo);
+            datosAmigos.put("nombre", nombre);
+            datosAmigos.put("direccion", direccion);
+            datosAmigos.put("telefono", telefono);
+            datosAmigos.put("email", email);
+            datosAmigos.put("dui", dui);
+            datosAmigos.put("urlFoto", urlCompletaFoto);
+
+            di = new detectarInternet(this);
+            if(di.hayConexionInternet()) {//online
+                //enviar los datos al servidor
+                enviarDatosServidor objEnviarDatos = new enviarDatosServidor(this);
+                String respuesta = objEnviarDatos.execute(datosAmigos.toString(), "POST", utilidades.url_mto).get();
+
+                JSONObject respuestaJSON = new JSONObject(respuesta);
+                if(respuestaJSON.getBoolean("ok")){
+                    id = respuestaJSON.getString("id");
+                    rev = respuestaJSON.getString("rev");
+                }else{
+                    mostrarMsg("Error: "+respuestaJSON.getString("msg"));
+                }
+            }
+            String[] datos = {idAmigo, nombre, direccion, telefono, email, dui, urlCompletaFoto};
+            db.administrar_amigos(accion, datos);
+            Toast.makeText(getApplicationContext(), "Registro guardado con exito.", Toast.LENGTH_LONG).show();
+            abrirVentana();
+        }catch (Exception e){
+            mostrarMsg("Error: "+e.getMessage());
+        }
     }
 }
