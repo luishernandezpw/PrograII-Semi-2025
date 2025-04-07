@@ -105,16 +105,13 @@ public class lista_amigos extends Activity {
                         enviarDatosServidor objEnviarDatosServidor = new enviarDatosServidor(this);
                         String respuesta = objEnviarDatosServidor.execute(datosAmigos.toString(), "DELETE", url).get();
                         JSONObject respuestaJSON = new JSONObject(respuesta);
-                        if(respuestaJSON.getBoolean("ok")) {
-                            obtenerDatosAmigos();
-                            mostrarMsg("Registro eliminado con exito");
-                        }else{
+                        if(!respuestaJSON.getBoolean("ok")) {
                             mostrarMsg("Error: " + respuesta);
                         }
                     }
                     String respuesta = db.administrar_amigos("eliminar", new String[]{jsonArray.getJSONObject(posicion).getJSONObject("value").getString("idAmigo")});
                     if(respuesta.equals("ok")) {
-                        obtenerDatosAmigos();
+                        listarDatos();
                         mostrarMsg("Registro eliminado con exito");
                     }else{
                         mostrarMsg("Error: " + respuesta);

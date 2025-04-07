@@ -30,10 +30,10 @@ public class DB extends SQLiteOpenHelper {
                     sql = "INSERT INTO amigos (nombre, direccion, telefono, email, dui, urlFoto) VALUES ('"+ datos[1] +"', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4] + "', '" + datos[5] + "', '" + datos[6] + "')";
                     break;
                 case "modificar":
-                    sql = "UPDATE amigos SET nombre = '" + datos[1] + "', direccion = '" + datos[2] + "', telefono = '" + datos[3] + "', email = '" + datos[4] + "', dui = '" + datos[5] + "', urlFoto = '" + datos[6] + "' WHERE idAmigo = " + datos[0];
+                    sql = "UPDATE amigos SET nombre = '" + datos[1] + "', direccion = '" + datos[2] + "', telefono = '" + datos[3] + "', email = '" + datos[4] + "', dui = '" + datos[5] + "', urlFoto = '" + datos[6] + "' WHERE idAmigo = '" + datos[0] + "'";
                     break;
                 case "eliminar":
-                    sql = "DELETE FROM amigos WHERE idAmigo = " + datos[0];
+                    sql = "DELETE FROM amigos WHERE idAmigo = '" + datos[0] + "'";
                     break;
             }
             db.execSQL(sql);
