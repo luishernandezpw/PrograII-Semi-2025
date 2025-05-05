@@ -20,8 +20,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -31,21 +35,21 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
     Button btn;
     TextView tempVal;
-    DB db;
     String accion = "nuevo", idAmigo = "", id="", rev="";
     ImageView img;
     String urlCompletaFoto = "";
     Intent tomarFotoIntent;
-    utilidades utls;
     detectarInternet di;
+    DatabaseReference databaseReference;
+    String miToken = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        utls = new utilidades();
+        obtenerToken();
         img = findViewById(R.id.imgFotoAmigo);
-        db = new DB(this);
+
         btn = findViewById(R.id.btnGuardarAmigo);
         btn.setOnClickListener(view->guardarAmigo());
 
@@ -54,6 +58,19 @@ public class MainActivity extends AppCompatActivity {
 
         mostrarDatos();
         tomarFoto();
+    }
+    private void obtenerToken(){
+        try{
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(tarea->{
+                if(!tarea.isSuccessful()){
+                    mostrarMsg("Error al obtener token: "+tarea.getException().getMessage());
+                }else{
+                    miToken = tarea.getResult();
+                }
+            });
+        }catch (Exception e){
+            mostrarMsg("Error al obtener token: "+e.getMessage());
+        }
     }
     private void mostrarDatos(){
         try {
@@ -83,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 urlCompletaFoto = datos.getString("urlFoto");
                 img.setImageURI(Uri.parse(urlCompletaFoto));
             }else {
-                idAmigo = utls.generarUnicoId();
+                //idAmigo = ;
             }
         }catch (Exception e){
             mostrarMsg("Error: "+e.getMessage());
@@ -152,43 +169,30 @@ public class MainActivity extends AppCompatActivity {
 
             tempVal = findViewById(R.id.txtTelefono);
             String telefono = tempVal.getText().toString();
+
             tempVal = findViewById(R.id.txtEmail);
             String email = tempVal.getText().toString();
 
             tempVal = findViewById(R.id.txtDui);
             String dui = tempVal.getText().toString();
 
-            JSONObject datosAmigos = new JSONObject();
-            if (accion.equals("modificar")) {
-                datosAmigos.put("_id", id);
-                datosAmigos.put("_rev", rev);
-            }
-            datosAmigos.put("idAmigo", idAmigo);
-            datosAmigos.put("nombre", nombre);
-            datosAmigos.put("direccion", direccion);
-            datosAmigos.put("telefono", telefono);
-            datosAmigos.put("email", email);
-            datosAmigos.put("dui", dui);
-            datosAmigos.put("urlFoto", urlCompletaFoto);
+            databaseReference = FirebaseDatabase.getInstance().getReference("amigos");
+            String key = databaseReference.push().getKey();
 
-            di = new detectarInternet(this);
-            if(di.hayConexionInternet()) {//online
-                //enviar los datos al servidor
-                enviarDatosServidor objEnviarDatos = new enviarDatosServidor(this);
-                String respuesta = objEnviarDatos.execute(datosAmigos.toString(), "POST", utilidades.url_mto).get();
-
-                JSONObject respuestaJSON = new JSONObject(respuesta);
-                if(respuestaJSON.getBoolean("ok")){
-                    id = respuestaJSON.getString("id");
-                    rev = respuestaJSON.getString("rev");
-                }else{
-                    mostrarMsg("Error: "+respuestaJSON.getString("msg"));
-                }
+            if( miToken.equals("") || miToken==null ){
+                obtenerToken();
             }
-            String[] datos = {idAmigo, nombre, direccion, telefono, email, dui, urlCompletaFoto};
-            db.administrar_amigos(accion, datos);
-            Toast.makeText(getApplicationContext(), "Registro guardado con exito.", Toast.LENGTH_LONG).show();
-            abrirVentana();
+            amigos amigo = new amigos(idAmigo, nombre, direccion, telefono, email, dui, urlCompletaFoto, miToken);
+            if( key!= null ){
+                databaseReference.child(key).setValue(amigo).addOnSuccessListener(success->{
+                    mostrarMsg("Registro guardado con exito.");
+                    abrirVentana();
+                }).addOnFailureListener(failure->{
+                    mostrarMsg("Error: "+failure.getMessage());
+                });
+            } else {
+                mostrarMsg("Error al guardar el registro.");
+            }
         }catch (Exception e){
             mostrarMsg("Error: "+e.getMessage());
         }

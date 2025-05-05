@@ -8,8 +8,9 @@ public class amigos {
     String email;
     String dui;
     String foto;
+    String miToken;
 
-    public amigos(String idAmigo, String nombre, String direccion, String telefono, String email, String dui, String foto) {
+    public amigos(String idAmigo, String nombre, String direccion, String telefono, String email, String dui, String foto, String miToken) {
         this.idAmigo = idAmigo;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -17,6 +18,15 @@ public class amigos {
         this.email = email;
         this.dui = dui;
         this.foto = foto;
+        this.miToken = miToken;
+    }
+
+    public String getMiToken() {
+        return miToken;
+    }
+
+    public void setMiToken(String miToken) {
+        this.miToken = miToken;
     }
 
     public String getIdAmigo() {
