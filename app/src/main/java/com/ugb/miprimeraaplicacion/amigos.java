@@ -8,9 +8,11 @@ public class amigos {
     String email;
     String dui;
     String foto;
+    String urlCompletaFotoFirestore;
     String miToken;
 
-    public amigos(String idAmigo, String nombre, String direccion, String telefono, String email, String dui, String foto, String miToken) {
+    public amigos() {}
+    public amigos(String idAmigo, String nombre, String direccion, String telefono, String email, String dui, String foto, String urlCompletaFotoFirestore, String miToken) {
         this.idAmigo = idAmigo;
         this.nombre = nombre;
         this.direccion = direccion;
@@ -19,8 +21,14 @@ public class amigos {
         this.dui = dui;
         this.foto = foto;
         this.miToken = miToken;
+        this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
     }
-
+    public String getUrlCompletaFotoFirestore() {
+        return urlCompletaFotoFirestore;
+    }
+    public void setUrlCompletaFotoFirestore(String urlCompletaFotoFirestore) {
+        this.urlCompletaFotoFirestore = urlCompletaFotoFirestore;
+    }
     public String getMiToken() {
         return miToken;
     }
