@@ -26,6 +26,9 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
+            android:name=".chats"
+            android:exported="false" />
+        <activity
             android:name=".lista_amigos"
             android:exported="true">
             <intent-filter>
