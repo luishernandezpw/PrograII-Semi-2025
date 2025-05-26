@@ -7,11 +7,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -31,6 +38,7 @@ public class chats extends Activity {
     String to="", from="", user="", msg="", urlFoto="", urlCompletaFotoFirestore="";
     DatabaseReference databaseReference;
     private chatsArrayAdapter chatArrayAdapter;
+    ListView ltsChats;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +61,11 @@ public class chats extends Activity {
         tempVal = findViewById(R.id.txtMsgChats);
         mostrarFoto();
         enviarMsg();
+        ltsChats = findViewById(R.id.ltsChats);
+
+        chatArrayAdapter = new chatsArrayAdapter(getApplicationContext(), R.layout.msgizquierda);
+        ltsChats.setAdapter(chatArrayAdapter);
+        historialMsg();
     }
     private void enviarMsg(){
         btn = findViewById(R.id.btnEnviarMsg);
@@ -79,15 +92,16 @@ public class chats extends Activity {
             misDatos.put("data", data);
 
             //enviar msg a los servidores de google
-            //enviarDatos objEviar = new enviarDatos();
-            //objEviar.execute(misDatos.toString());
+            enviarDatos objEviar = new enviarDatos();
+            objEviar.execute(misDatos.toString());
 
             //guardart en firebase
-            chats_mensajes chatsMensajes = new chats_mensajes(from, msg, to, to+"_"+from);
+            chats_mensajes chatsMsg = new chats_mensajes(from, msg, to, to+"_"+from);
             String key = databaseReference.push().getKey();
-            databaseReference.child(key).setValue(chatsMensajes);
+            databaseReference.child(key).setValue(chatsMsg);
         }catch (Exception e){
-            mostrarMsg("Error al guardar msg en firebase: "+ e.getMessage());
+
+            mostrarMsg("Error al guardar msg en firebasemmmmm: "+ e.getMessage());
         }
     }
     private void sendChatMessage(Boolean posicion, String msg){
@@ -113,6 +127,27 @@ public class chats extends Activity {
         Intent intent = new Intent(this, lista_amigos.class);
         startActivity(intent);
     }
+    void historialMsg(){
+        databaseReference = FirebaseDatabase.getInstance().getReference("chats");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if( snapshot.getChildrenCount()>0 ){
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        if( (dataSnapshot.child("de").getValue().equals(from) && dataSnapshot.child("para").getValue().equals(to))
+                                || (dataSnapshot.child("de").getValue().equals(to) && dataSnapshot.child("para").getValue().equals(from))) {
+                            sendChatMessage(dataSnapshot.child("para").getValue().equals(from), dataSnapshot.child("msg").getValue().toString());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     private class enviarDatos extends AsyncTask<String, String, String>{
         HttpURLConnection httpURLConnection;
         @Override
@@ -132,7 +167,7 @@ public class chats extends Activity {
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setRequestProperty("Content-Type", "application/json");
                 httpURLConnection.setRequestProperty("Accept", "application/json");
-                httpURLConnection.setRequestProperty("Authorization","key=");
+                httpURLConnection.setRequestProperty("Authorization","key=BI8BanTAjfy-2d28jD3K4x4fhXV7qVuo8I-cWQxb0q5W-35JLEeO1nV6UcaPAN8XdsrMsSJffRU_6lqFhBlrxx0");
                 //establecer los encabezados y los dfatos
                 Writer writer = new BufferedWriter(new OutputStreamWriter(httpURLConnection.getOutputStream(),"UTF-8"));
                 writer.write(jsonDATA);
