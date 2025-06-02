@@ -45,11 +45,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="50dp"/>
-    <Button
+
+    <ImageButton
         android:id="@+id/btnEnviarMsg"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        app:icon="@drawable/enviar"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/send"/>
 </RelativeLayout>
